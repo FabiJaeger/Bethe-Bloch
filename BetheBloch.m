@@ -1,17 +1,18 @@
-function [Stoppingpower]= BetheBloch(Z,A,I,rho,z,a,m,E,C,delta,VisBool)
+function [Stoppingpower]= BetheBloch(Z,I,z,a,m,E,C,delta,VisBool)
 %%%%%%%%%%%%%%%%%%%%
 %Calculates the stoppingpower for a given atomicnumber z and kinetic energy in MeV/u of the projectile
-%Z     charge of the target
-%A     Atomicnumber of the target
-%I     mean ionisation energy of the target
-%rho   density of the target
-%z     cahrge number of the projectile
-%E     projectile energy in MeV/u
-%C     shell correction
-%delta density correction 
-%m     projectile mass in atom
+% Z     charge of the target
+% I     mean ionisation energy of the target [J]
+% z     cahrge number of the projectile
+% E     projectile energy [MeV/u]
+% C     shell correction
+% delta density correction 
+% m     projectile mass [kg]
 %
-% refernece: https://doi.org/10.1063/1.369844
+% reference: https://doi.org/10.1063/1.369844
+%
+% in order to run a minimum example for hydrogen isotopes in water
+% BetheBloch(7,78*1.6e-19,[1 1 1],[1 2 3],[1 2 3]*1.66e-27,logspace(-2,4,100),0,0,1)
 %%%%%%%%%%%%%%%%%%%%%
 
 
@@ -28,17 +29,13 @@ r0      = e^2/(m_e*c^2);%0.52917721067 * 10^(-10) % bohr electron radius        
 k       = 4 .* pi .* r0.^2 .* m_e * c.^2/e/1000/1000
 %% Unit conversion
 
-E=E*e*1000000 % energy in si unit
+E = E*e*1000000 % energy in si unit
 
 %% Bethe Bloch Formula
 
 beta  = @(E,m) (sqrt(1-(m*c^2./(E+m*c^2)).^2))    % Formula for calculating beta from particle energie
 gamma = @(E,m) (sqrt(1./(1-beta(E,m).^2)))
 Tmax  = @(E,m) (2.*m_e.*c^2.*beta(E,m).^2 .* gamma(E,m).^2./((1+2.*gamma(E,m).*m_e./m+(m_e./m).^2)))    % Formula for retrieving Tmax for BB2
-
-
-
-
 
 Stoppingpower =zeros(size(m,2)*size(Z,2),size(E,2));
 
